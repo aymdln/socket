@@ -1,7 +1,7 @@
-require('dotenv').config()
 var app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
+require('dotenv').config()
 const fetch = require("node-fetch");
 
 let base = "https://api.trello.com/1/boards/"
@@ -12,26 +12,18 @@ let token = `token=${process.env.TRELLO_TOKEN}`
 
 let url = base + id + option + key + token
 
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
-});
-
-io.on('connection', function (socket) {
-  console.log('Client Connect')
+function callApi() {
   fetch(url)
     .then(response => response.json())
     .then((data) => {
       data.forEach(item => {
-        io.emit('lists', item.name)
+        io.emit('lists', "test")
       });
     }).catch(e => {
       console.log(e);
    });
-   socket.on('test', (data2) => {
-    console.log(data2);
-   });
-});
+}
 
-http.listen(80, function(){
-  console.log('listening on *:80');
-});
+
+
+module.exports.callApi = callApi;
